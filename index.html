@@ -4,13 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0; url=http://cheungwt.uk/en">
     <script>
-        // JavaScript fallback in case the meta refresh doesn't work
-        window.location.href = "http://cheungwt.uk/en";
+        // Function to determine redirection based on the user's country
+        async function redirectUser() {
+            try {
+                // Fetch the user's location data using a geolocation API
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+
+                // Get the user's country code
+                const countryCode = data.country_code;
+
+                // Redirect based on the user's country
+                if (countryCode === 'HK' || countryCode === 'MO') {
+                    window.location.href = 'http://cheungwt.uk/zh-hk/';
+                } else if (['CN', 'SG', 'MY'].includes(countryCode)) {
+                    window.location.href = 'http://cheungwt.uk/zh-cn/';
+                } else {
+                    window.location.href = 'http://cheungwt.uk/en-uk/';
+                }
+            } catch (error) {
+                console.error('Geolocation API error:', error);
+                // Default to English version in case of an error
+                window.location.href = 'http://cheungwt.uk/en-uk/';
+            }
+        }
+
+        // Call the redirection function when the page loads
+        redirectUser();
     </script>
 </head>
 <body>
-    <p>If you are not redirected automatically, <a href="http://cheungwt.uk/en">click here</a>.</p>
+    <p>Redirecting you to the appropriate version of the website...</p>
 </body>
 </html>
