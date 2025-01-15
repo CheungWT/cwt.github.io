@@ -1,1 +1,6 @@
-# cwt.github.io
+# CWT
+For Chinese version, Please click <a href="http://cheungwt.uk/zh-hk/" target="_blank">繁體中文版</a><br></span></div>
+For simplified Chinese version, please click <a href="http://cheungwt.uk/zh-cn/" target="_blank">简体中文版</a><br></span></div>
+Here is Daniel Cheung, a Secondary one student from Hong Kong, China.
+ 
+  
