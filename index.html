@@ -22,19 +22,16 @@
                 const response = await fetch('https://ipapi.co/json/');
                 const data = await response.json();
                 const { country, region } = data;
-
-                // Redirect based on location
                 if (country === 'HK' || country === 'MO') {
-                    window.location.href = 'https://cheungwt.uk/zh-hk'; // Change to your URL
+                    window.location.href = 'https://cheungwt.uk/zh-hk'; // redirect to Cantoese Edition
                 } else if (country === 'CN' || country === 'SG' || country === 'MY') {
-                    window.location.href = 'https://cheungwt.uk/zh-cn'; // Change to your URL
+                    window.location.href = 'https://cheungwt.uk/zh-cn'; // redirect to Sim Chinese Edition
                 } else {
-                    window.location.href = 'https://cheungwt.uk/en-uk'; // Change to your URL
+                    window.location.href = 'https://cheungwt.uk/en-uk'; // redirect to English Edition
                 }
             } catch (error) {
                 console.error('Error fetching location data:', error);
-                // Fallback to default redirect
-                window.location.href = 'https://cheungwt.uk/en-uk'; // Change to your URL
+                window.location.href = 'https://cheungwt.uk/en-uk'; // redirect to uk Edition
             }
         }
 
