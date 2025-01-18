@@ -23,9 +23,9 @@
                 const data = await response.json();
                 const { country, region } = data;
                 if (country === 'HK' || country === 'MO') {
-                    window.location.href = 'https://cheungwt.uk/zh-hk'; // if in HK or Macau, redirect to Cantoese Edition
+                    window.location.href = 'https://cheungwt.uk/zh-hk';
                 } else if (country === 'CN' || country === 'SG' || country === 'MY') {
-                    window.location.href = 'https://cheungwt.uk/zh-cn'; // if in China, Singapore or Malysia, redirect to Sim Chinese Edition
+                    window.location.href = 'https://cheungwt.uk/zh-cn';
         redirectUser();
     </script>
 </body>
