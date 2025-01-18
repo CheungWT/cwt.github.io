@@ -26,11 +26,6 @@
                     window.location.href = 'https://cheungwt.uk/zh-hk'; // if in HK or Macau, redirect to Cantoese Edition
                 } else if (country === 'CN' || country === 'SG' || country === 'MY') {
                     window.location.href = 'https://cheungwt.uk/zh-cn'; // if in China, Singapore or Malysia, redirect to Sim Chinese Edition
-            } catch (error) {
-                console.error('Error fetching location data:', error);
-                window.location.href = 'https://cheungwt.uk/zh-hk'; // if cannot get ip adress, redirect to Sim Chinese Edition
-            }
-        }
         redirectUser();
     </script>
 </body>
