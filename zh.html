@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location-Based Redirect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+    <p>Please wait, we will check your location and direct to the the most suitable edition.<br>請等陣, 我哋好快就會將你導向至最適合嘅版本。<br>请稍等, 我们很快就会将您导向最适合的的版本。</p>
+    <h1> if you was not directed to the best edition, please click  <a href="http://cheungwt.uk/en-uk" target="_blank">here</a><br>.</h1>
+    <script>
+        async function redirectUser() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                const { country, region } = data;
+                if (country === 'HK' || country === 'MO') {
+                    window.location.href = 'https://cheungwt.uk/zh-hk'; // if in HK or Macau, redirect to Cantoese Edition
+                } else if (country === 'CN' || country === 'SG' || country === 'MY') {
+                    window.location.href = 'https://cheungwt.uk/zh-cn'; // if in China, Singapore or Malysia, redirect to Sim Chinese Edition
+            } catch (error) {
+                console.error('Error fetching location data:', error);
+                window.location.href = 'https://cheungwt.uk/zh-hk'; // if cannot get ip adress, redirect to Sim Chinese edition
+            }
+        }
+        redirectUser();
+    </script>
+</body>
+</html>
