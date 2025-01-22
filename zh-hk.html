@@ -56,7 +56,7 @@
 </head>
 <body>
     <div class="password-container">
-        <h1>Enter Password to Access</h1>
+        <h1>Enter Password to Access or use <a href="http://cheungwt.uk/zh-cn" target="_blank">Simplified Chinese Edition</a></h1>
         <input type="password" id="password" placeholder="Enter password">
         <button onclick="checkPassword()">Submit</button>
         <p class="error-message" id="error-message"></p>
@@ -70,7 +70,7 @@
 
             if (inputPassword === correctPassword) {
                 // Redirect or show content
-                window.location.href = "/zh-hk/real.html"; // Replace with your protected page URL
+                window.location.href = "/zh-hk/real"; // Replace with your protected page URL
             } else {
                 errorMessage.textContent = "Incorrect password. Please try again.";
             }
