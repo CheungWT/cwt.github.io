@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>8964小遊戲</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation;
+        }
+
+        body {
+            background-color: #1a1c1e;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            color: #e8eaed;
+            padding: 10px;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            touch-action: none;
+        }
+
+        canvas {
+            background-color: #2c3e50;
+            border-bottom: 4px solid #7f8c8d;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+            width: 100%;
+            height: auto;
+            max-height: 340px;
+            display: block;
+            touch-action: none;
+        }
+
+        .ui-panel {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(15px, 2.8vw, 18px);
+            background: #23262a;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .touch-controls {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            gap: 12px;
+        }
+
+        .touch-btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            background: #34495e;
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            font-size: clamp(16px, 3vw, 19px);
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1a252f;
+            transition: transform 0.05s, background-color 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 85px;
+            min-height: 52px;
+        }
+
+        .btn:active, .btn.active {
+            box-shadow: 0 1px 0 #1a252f;
+            transform: translateY(3px);
+        }
+
+        .btn-fire {
+            background: #e74c3c;
+            box-shadow: 0 4px 0 #952318;
+            min-width: 110px;
+        }
+
+        .btn-fire:active, .btn-fire.active {
+            box-shadow: 0 1px 0 #952318;
+            background: #c0392b;
+        }
+
+        .btn-start {
+            background: #f39c12;
+            box-shadow: 0 5px 0 #b7760b;
+            color: #111;
+            padding: 12px 36px;
+            font-size: 22px;
+            border-radius: 30px;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 18, 22, 0.85);
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+
+        #overlay h1 {
+            font-size: clamp(24px, 5.5vw, 36px);
+            color: #f1c40f;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        #combo-tag {
+            color: #f39c12;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="900" height="300"></canvas>
+
+    <div class="ui-panel">
+        <div>
+            碾壓數: <span id="crush-count" style="color: #e74c3c;">0</span>
+            <span id="combo-tag">COMBO x<span id="combo-num">0</span>!</span>
+        </div>
+        <div>
+            得分: <span id="score">00000</span>
+        </div>
+    </div>
+
+    <div id="overlay">
+        <h1>8964小遊戲</h1>
+        <button class="btn btn-start" id="start-btn">開始遊戲</button>
+    </div>
+
+    <div class="touch-controls">
+        <div class="touch-btn-group">
+            <button class="btn" id="btn-jump">跳躍 ⬆</button>
+            <button class="btn" id="btn-duck">下沉 ⬇</button>
+        </div>
+        <button class="btn btn-fire" id="btn-fire">開砲 💥</button>
+    </div>
+</div>
+
+<script>
+/**
+ * 59式坦克長安大道 - 重畫59式坦克版
+ */
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const startBtn = document.getElementById('start-btn');
+
+const scoreEl = document.getElementById('score');
+const crushCountEl = document.getElementById('crush-count');
+const comboTag = document.getElementById('combo-tag');
+const comboNum = document.getElementById('combo-num');
+
+const btnJump = document.getElementById('btn-jump');
+const btnDuck = document.getElementById('btn-duck');
+const btnFire = document.getElementById('btn-fire');
+
+let isRunning = false;
+let score = 0;
+let crushCount = 0;
+let combo = 0;
+let comboTimer = null;
+
+let gameSpeed = 3.2;
+const initialSpeed = 3.2;
+const maxSpeed = 7.0;
+let frameCount = 0;
+
+const GROUND_Y = 240;
+
+// Web Audio 音效
+class SoundFX {
+    constructor() { this.ctx = null; }
+    init() {
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+    playJump() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(120, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(320, this.ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.15);
+    }
+    playSquish() {
+        if (!this.ctx) return;
+        const buf = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.08, this.ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buf;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(500, this.ctx.currentTime);
+        filter.frequency.linearRampToValueAtTime(70, this.ctx.currentTime + 0.08);
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+        noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+        noise.start();
+    }
+    playCannon() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(25, this.ctx.currentTime + 0.22);
+        gain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.22);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.22);
+    }
+}
+const sfx = new SoundFX();
+
+// 【全新重畫】59式坦克類別 (完整整體繪製，杜絕上下分離)
+class Type59Tank {
+    constructor() {
+        this.x = 90;
+        this.w = 95;
+        this.h = 46;
+        this.y = GROUND_Y - this.h;
+        this.vy = 0;
+        this.gravity = 0.65;
+        this.jumpPower = -12.5;
+        this.isGrounded = true;
+        this.treadFrame = 0;
+        this.recoil = 0;
+    }
+
+    update() {
+        this.vy += this.gravity;
+        this.y += this.vy;
+
+        if (this.y >= GROUND_Y - this.h) {
+            this.y = GROUND_Y - this.h;
+            this.vy = 0;
+            this.isGrounded = true;
+        } else {
+            this.isGrounded = false;
+        }
+
+        if (this.isGrounded) {
+            this.treadFrame = (this.treadFrame + gameSpeed * 0.2) % (Math.PI * 2);
+        }
+
+        if (this.recoil > 0) this.recoil -= 0.6;
+    }
+
+    jump() {
+        if (this.isGrounded) {
+            this.vy = this.jumpPower;
+            this.isGrounded = false;
+            sfx.playJump();
+            createParticles(this.x + 15, this.y + this.h, 8, '#95a5a6', 1.5);
+        }
+    }
+
+    duck() {
+        if (!this.isGrounded) this.vy += 5;
+    }
+
+    draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        const rX = -this.recoil; // 開砲後座力位移
+
+        // 色彩定義 (標準59式橄欖軍綠配色)
+        const greenBase = '#3b542e';
+        const greenLight = '#537442';
+        const greenDark = '#25381c';
+        const metalDark = '#18201a';
+        const metalMid = '#2c362f';
+        const wheelRim = '#101411';
+        const wheelCenter = '#445b37';
+
+        // 1. 地面陰影
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        ctx.ellipse(45, 43, 46, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. 100mm 主砲砲管 (含抽煙筒與砲口裝置)
+        // 砲管主體
+        ctx.fillStyle = greenDark;
+        ctx.fillRect(48 + rX, 15, 44, 5);
+        ctx.fillStyle = greenLight;
+        ctx.fillRect(48 + rX, 15, 44, 2); // 頂部高光
+
+        // 抽煙裝置 (Bore Evacuator - 59式標誌特徵)
+        ctx.fillStyle = greenBase;
+        ctx.fillRect(72 + rX, 13, 12, 9);
+        ctx.strokeStyle = greenDark;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(72 + rX, 13, 12, 9);
+
+        // 砲口防塵蓋/砲口細節
+        ctx.fillStyle = metalDark;
+        ctx.fillRect(91 + rX, 14, 3, 7);
+
+        // 3. 圓頂鑄造砲塔 (Cast Dome Turret)
+        // 砲塔底層基座
+        ctx.fillStyle = greenDark;
+        ctx.beginPath();
+        ctx.ellipse(36 + rX * 0.2, 20, 24, 12, 0, Math.PI, Math.PI * 2);
+        ctx.fill();
+
+        // 砲塔立體弧形 (漸層)
+        let tGrad = ctx.createLinearGradient(16, 8, 56, 24);
+        tGrad.addColorStop(0, greenLight);
+        tGrad.addColorStop(0.65, greenBase);
+        tGrad.addColorStop(1, greenDark);
+        ctx.fillStyle = tGrad;
+        ctx.beginPath();
+        ctx.ellipse(35 + rX * 0.2, 19, 23, 11, 0, Math.PI, Math.PI * 2);
+        ctx.fill();
+
+        // 車長觀察塔 (Hatch) 與航向機槍/天線
+        ctx.fillStyle = metalDark;
+        ctx.fillRect(23 + rX * 0.2, 5, 10, 3); // 頂蓋
+        ctx.fillRect(17 + rX * 0.2, 3, 16, 2); // 高射機槍槍管
+        ctx.fillRect(12 + rX * 0.2, -4, 1.5, 12); // 通信天線
+
+        // 紅外探照燈 (砲塔前側)
+        ctx.fillStyle = metalDark;
+        ctx.fillRect(48 + rX * 0.2, 14, 5, 6);
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(52 + rX * 0.2, 15, 1, 4);
+
+        // 4. 車體裝甲 (Hull) 與首上傾斜板
+        // 車體主框
+        ctx.fillStyle = greenBase;
+        ctx.beginPath();
+        ctx.moveTo(2, 24);
+        ctx.lineTo(68, 24);  // 裝甲上邊緣
+        ctx.lineTo(82, 31);  // 車頭首上斜板
+        ctx.lineTo(82, 37);
+        ctx.lineTo(2, 37);
+        ctx.closePath();
+        ctx.fill();
+
+        // 首上斜板高光切面
+        ctx.fillStyle = greenLight;
+        ctx.beginPath();
+        ctx.moveTo(67, 24);
+        ctx.lineTo(81, 31);
+        ctx.lineTo(79, 33);
+        ctx.lineTo(65, 26);
+        ctx.fill();
+
+        // 側裙擋泥板 (Mudguard)
+        ctx.fillStyle = metalDark;
+        ctx.fillRect(0, 26, 82, 2.5);
+
+        // 車尾外掛油桶 (59式經典細節)
+        ctx.fillStyle = greenDark;
+        ctx.fillRect(-2, 26, 5, 8);
+        ctx.strokeStyle = metalDark;
+        ctx.strokeRect(-2, 26, 5, 8);
+
+        // 5. 履帶底盤與 5 對大負重輪 (5 Road Wheels)
+        // 外圍履帶圈
+        ctx.fillStyle = metalDark;
+        ctx.beginPath();
+        ctx.roundRect(-2, 30, 86, 13, 5);
+        ctx.fill();
+
+        // 動態滾動履帶齒
+        ctx.strokeStyle = '#38433a';
+        ctx.lineWidth = 1.5;
+        const trackOffset = (this.treadFrame * 2) % 6;
+        for (let tx = -1; tx < 84; tx += 6) {
+            ctx.beginPath();
+            ctx.moveTo(tx - trackOffset, 30);
+            ctx.lineTo(tx - trackOffset, 32);
+            ctx.moveTo(tx - trackOffset, 41);
+            ctx.lineTo(tx - trackOffset, 43);
+            ctx.stroke();
+        }
+
+        // 59式標誌性「5對大直徑負重輪」(第1與第2輪間距較大)
+        const wheelXs = [9, 24, 38, 52, 67];
+
+        wheelXs.forEach((wx) => {
+            const wy = 36.5;
+
+            // 橡膠外圈
+            ctx.fillStyle = wheelRim;
+            ctx.beginPath();
+            ctx.arc(wx, wy, 5.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 鋼製輪轂
+            ctx.fillStyle = wheelCenter;
+            ctx.beginPath();
+            ctx.arc(wx, wy, 3.8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 軸心蓋
+            ctx.fillStyle = metalDark;
+            ctx.beginPath();
+            ctx.arc(wx, wy, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 旋轉動態輻條
+            ctx.strokeStyle = greenDark;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(wx, wy);
+            ctx.lineTo(
+                wx + Math.cos(this.treadFrame) * 3.5,
+                wy + Math.sin(this.treadFrame) * 3.5
+            );
+            ctx.stroke();
+        });
+
+        // 前誘導輪與後主動輪
+        ctx.fillStyle = metalDark;
+        ctx.beginPath();
+        ctx.arc(1, 36.5, 3.5, 0, Math.PI * 2);   // 後主動輪
+        ctx.arc(78, 35.5, 4, 0, Math.PI * 2);   // 前誘導輪
+        ctx.fill();
+
+        ctx.restore();
+
+        // 引擎排氣黑煙
+        if (frameCount % 4 === 0 && this.isGrounded) {
+            particles.push(new Particle(
+                this.x - 3, this.y + 32,
+                -Math.random() * 1.5 - 0.5, (Math.random() - 0.5) * 0.4,
+                Math.random() * 3 + 2, 'rgba(180,180,180,0.3)', 18
+            ));
+        }
+    }
+}
+
+// 砲彈
+class Shell {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.speed = 12;
+        this.active = true;
+    }
+    update() {
+        this.x += this.speed;
+        if (this.x > canvas.width) this.active = false;
+        particles.push(new Particle(this.x, this.y, -1, (Math.random() - 0.5), 2.5, '#f39c12', 8));
+    }
+    draw() {
+        ctx.fillStyle = '#f1c40f';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// 障礙物與行人
+class Entity {
+    constructor(x, y, w, h, type) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.type = type;
+        this.active = true;
+        this.animFrame = Math.random() * 10;
+    }
+
+    update() {
+        this.x -= gameSpeed;
+        if (this.type === 'person') this.x -= 0.2;
+        if (this.x + this.w < -60) this.active = false;
+        this.animFrame += 0.15;
+    }
+
+    draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        if (this.type === 'person') {
+            ctx.strokeStyle = '#ecf0f1';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.arc(this.w / 2, 5, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#f39c12';
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(this.w / 2, 9);
+            ctx.lineTo(this.w / 2, 19);
+            ctx.stroke();
+
+            const leg = Math.sin(this.animFrame * 2.5) * 5;
+            ctx.beginPath();
+            ctx.moveTo(this.w / 2, 19);
+            ctx.lineTo(this.w / 2 - leg, 27);
+            ctx.moveTo(this.w / 2, 19);
+            ctx.lineTo(this.w / 2 + leg, 27);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(this.w / 2, 12);
+            ctx.lineTo(this.w / 2 - 6, 6);
+            ctx.moveTo(this.w / 2, 12);
+            ctx.lineTo(this.w / 2 + 6, 6);
+            ctx.stroke();
+
+        } else if (this.type === 'barrier') {
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(0, 6, this.w, this.h - 6);
+            ctx.fillStyle = '#f39c12';
+            for (let i = 0; i < this.w; i += 8) {
+                ctx.fillRect(i, 6, 4, this.h - 6);
+            }
+        }
+
+        ctx.restore();
+    }
+}
+
+// 粒子
+class Particle {
+    constructor(x, y, vx, vy, size, color, life) {
+        this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+        this.size = size; this.color = color; this.life = life; this.maxLife = life;
+    }
+    update() {
+        this.x += this.vx; this.y += this.vy; this.life--;
+    }
+    draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.life / this.maxLife);
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+let tank = new Type59Tank();
+let shells = [];
+let entities = [];
+let particles = [];
+
+function createParticles(x, y, count, color, speedScale = 2.5) {
+    for (let i = 0; i < count; i++) {
+        const vx = (Math.random() - 0.5) * speedScale;
+        const vy = (Math.random() - 0.5) * speedScale;
+        particles.push(new Particle(x, y, vx, vy, Math.random() * 3 + 1.5, color, Math.random() * 15 + 10));
+    }
+}
+
+// 天安門城樓背景
+function drawTiananmenBackground() {
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+    skyGrad.addColorStop(0, '#1c2833');
+    skyGrad.addColorStop(0.7, '#2c3e50');
+    skyGrad.addColorStop(1, '#34495e');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, canvas.width, GROUND_Y);
+
+    const tX = 170;
+    const tY = 60;
+
+    // 1. 朱紅城牆底座
+    ctx.fillStyle = '#922b21';
+    ctx.fillRect(tX, tY + 70, 560, 70);
+
+    // 白色漢白玉欄杆
+    ctx.fillStyle = '#ecf0f1';
+    ctx.fillRect(tX - 12, tY + 66, 584, 5);
+
+    // 2. 五個拱形城門
+    ctx.fillStyle = '#11161b';
+    const gateWs = [20, 24, 32, 24, 20];
+    const gateOffsets = [-150, -75, 0, 75, 150];
+    for (let i = 0; i < 5; i++) {
+        const gx = tX + 280 + gateOffsets[i] - gateWs[i] / 2;
+        const gh = (i === 2) ? 38 : 30;
+        ctx.beginPath();
+        ctx.roundRect(gx, tY + 140 - gh, gateWs[i], gh, [10, 10, 0, 0]);
+        ctx.fill();
+    }
+
+    // 3. 中央肖像框
+    ctx.fillStyle = '#d4ac0d';
+    ctx.fillRect(tX + 266, tY + 76, 28, 34);
+    ctx.fillStyle = '#1c2833';
+    ctx.fillRect(tX + 268, tY + 78, 24, 30);
+
+    // 4. 城樓二層木結構柱廊
+    ctx.fillStyle = '#a93226';
+    ctx.fillRect(tX + 90, tY + 28, 380, 38);
+
+    // 金黃色柱子
+    ctx.fillStyle = '#f1c40f';
+    for (let p = 0; p < 10; p++) {
+        ctx.fillRect(tX + 102 + p * 39, tY + 28, 5, 38);
+    }
+
+    // 5. 黃琉璃瓦歇山頂
+    ctx.fillStyle = '#f39c12';
+    ctx.beginPath();
+    ctx.moveTo(tX + 40, tY + 66);
+    ctx.lineTo(tX + 520, tY + 66);
+    ctx.lineTo(tX + 540, tY + 72);
+    ctx.lineTo(tX + 20, tY + 72);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#e67e22';
+    ctx.beginPath();
+    ctx.moveTo(tX + 120, tY + 28);
+    ctx.lineTo(tX + 440, tY + 28);
+    ctx.lineTo(tX + 485, tY + 5);
+    ctx.lineTo(tX + 75, tY + 5);
+    ctx.closePath();
+    ctx.fill();
+
+    // 6. 漢白玉華表
+    drawHuabiao(100, 105);
+    drawHuabiao(800, 105);
+
+    // 7. 長安大道地面
+    ctx.fillStyle = '#626567';
+    ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
+
+    ctx.strokeStyle = '#ecf0f1';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND_Y + 2);
+    ctx.lineTo(canvas.width, GROUND_Y + 2);
+    ctx.stroke();
+
+    const lineOffset = (frameCount * gameSpeed) % 60;
+    ctx.strokeStyle = '#f1c40f';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([25, 35]);
+    ctx.lineDashOffset = -lineOffset;
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND_Y + 28);
+    ctx.lineTo(canvas.width, GROUND_Y + 28);
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
+
+function drawHuabiao(x, y) {
+    ctx.fillStyle = '#ecf0f1';
+    ctx.fillRect(x - 5, y + 20, 10, 115);
+    ctx.beginPath();
+    ctx.ellipse(x, y + 25, 20, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(x - 10, y + 8, 20, 14);
+}
+
+// 開砲
+function fireCannon() {
+    if (!isRunning) return;
+    shells.push(new Shell(tank.x + 92, tank.y + 16));
+    tank.recoil = 6;
+    sfx.playCannon();
+    createParticles(tank.x + 92, tank.y + 16, 10, '#f39c12', 4);
+}
+
+// 連擊
+function triggerCombo() {
+    combo++;
+    crushCount++;
+    crushCountEl.textContent = crushCount;
+
+    if (combo >= 2) {
+        comboNum.textContent = combo;
+        comboTag.style.opacity = '1';
+        clearTimeout(comboTimer);
+        comboTimer = setTimeout(() => {
+            comboTag.style.opacity = '0';
+            combo = 0;
+        }, 1200);
+    }
+}
+
+// 生成障礙物
+function spawnEntities() {
+    if (frameCount % Math.max(35, Math.floor(650 / gameSpeed)) === 0) {
+        const rand = Math.random();
+        if (rand < 0.7) {
+            const count = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < count; i++) {
+                entities.push(new Entity(canvas.width + i * 36, GROUND_Y - 28, 16, 28, 'person'));
+            }
+        } else {
+            entities.push(new Entity(canvas.width, GROUND_Y - 22, 28, 22, 'barrier'));
+        }
+    }
+}
+
+// 碰撞判定
+function checkCollisions() {
+    for (let s of shells) {
+        if (!s.active) continue;
+        for (let e of entities) {
+            if (!e.active) continue;
+            if (s.x > e.x && s.x < e.x + e.w && s.y > e.y && s.y < e.y + e.h) {
+                s.active = false;
+                e.active = false;
+                createParticles(e.x + e.w / 2, e.y + e.h / 2, 16, '#e67e22', 3.5);
+                sfx.playCannon();
+                score += (e.type === 'person') ? 50 : 100;
+            }
+        }
+    }
+
+    const tBox = { x: tank.x + 5, y: tank.y + 4, w: tank.w - 10, h: tank.h - 4 };
+
+    for (let e of entities) {
+        if (!e.active) continue;
+
+        if (
+            tBox.x < e.x + e.w &&
+            tBox.x + tBox.w > e.x &&
+            tBox.y < e.y + e.h &&
+            tBox.y + tBox.h > e.y
+        ) {
+            e.active = false;
+            if (e.type === 'person') {
+                sfx.playSquish();
+                createParticles(e.x + e.w / 2, GROUND_Y - 2, 15, '#e74c3c', 3.5);
+                score += 100;
+                triggerCombo();
+            } else {
+                sfx.playCannon();
+                createParticles(e.x + e.w / 2, e.y + e.h / 2, 15, '#f39c12', 3.5);
+                score += 50;
+            }
+        }
+    }
+}
+
+// 主循環
+function gameLoop() {
+    if (!isRunning) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frameCount++;
+    score += 0.1;
+    gameSpeed = Math.min(maxSpeed, initialSpeed + (score / 800));
+
+    scoreEl.textContent = String(Math.floor(score)).padStart(5, '0');
+
+    drawTiananmenBackground();
+
+    tank.update();
+    tank.draw();
+
+    shells.forEach(s => s.update());
+    shells = shells.filter(s => s.active);
+    shells.forEach(s => s.draw());
+
+    spawnEntities();
+    entities.forEach(e => e.update());
+    entities = entities.filter(e => e.active);
+    entities.forEach(e => e.draw());
+
+    checkCollisions();
+
+    particles.forEach(p => p.update());
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => p.draw());
+
+    requestAnimationFrame(gameLoop);
+}
+
+function startGame() {
+    sfx.init();
+    isRunning = true;
+    score = 0;
+    crushCount = 0;
+    combo = 0;
+    gameSpeed = initialSpeed;
+    frameCount = 0;
+    entities = [];
+    shells = [];
+    particles = [];
+    tank = new Type59Tank();
+
+    crushCountEl.textContent = '0';
+    overlay.style.display = 'none';
+
+    requestAnimationFrame(gameLoop);
+}
+
+// 按鈕與觸控事件
+function bindTouchBtn(btn, action) {
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        btn.classList.add('active');
+        action();
+    }, { passive: false });
+
+    btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        btn.classList.remove('active');
+    }, { passive: false });
+
+    btn.addEventListener('click', (e) => {
+        action();
+    });
+}
+
+bindTouchBtn(btnJump, () => {
+    if (!isRunning) startGame();
+    else tank.jump();
+});
+
+bindTouchBtn(btnDuck, () => {
+    if (isRunning) tank.duck();
+});
+
+bindTouchBtn(btnFire, () => {
+    if (isRunning) fireCannon();
+});
+
+startBtn.addEventListener('click', startGame);
+
+let touchStartY = 0;
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (!isRunning) {
+        startGame();
+        return;
+    }
+    if (e.changedTouches.length > 0) {
+        const touchEndY = e.changedTouches[0].clientY;
+        const deltaY = touchEndY - touchStartY;
+
+        if (deltaY > 30) {
+            tank.duck();
+        } else if (Math.abs(deltaY) < 15) {
+            tank.jump();
+        }
+    }
+}, { passive: false });
+
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        if (!isRunning) startGame();
+        else tank.jump();
+    } else if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        if (isRunning) tank.duck();
+    } else if (e.code === 'KeyF' || e.code === 'ControlLeft' || e.code === 'ControlRight') {
+        e.preventDefault();
+        fireCannon();
+    }
+});
+
+</script>
+</body>
+</html>
