@@ -2,7 +2,10 @@ name: Deploy Wikitext Site
 
 on:
   push:
-    branches: [ main ] # 或 master
+    branches: [ main ]  # 如果你的預設分支是 master，這裡請改成 master
+
+permissions:
+  contents: write      # 給予部署套件寫入 gh-pages 分支的權限
 
 jobs:
   build-and-deploy:
@@ -14,9 +17,9 @@ jobs:
       - name: 設定 Node.js 環境
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
-      - name: 在 GitHub 雲端執行構建
+      - name: 雲端執行 build.js 轉換 Wikitext
         run: node build.js
 
       - name: 發布到 GitHub Pages
