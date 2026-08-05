@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWT文化革命集團</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            line-height: 1.6;
+            color: #202122;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border: 1px solid #a2a9b1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .header-emblems {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #a2a9b1;
+        }
+        .header-emblems img {
+            vertical-align: middle;
+            margin: 0 12px;
+        }
+        h1 {
+            font-size: 1.8em;
+            border-bottom: 1px solid #a2a9b1;
+            padding-bottom: 5px;
+            margin-top: 0;
+            font-weight: normal;
+        }
+        h2 {
+            font-size: 1.4em;
+            border-bottom: 1px solid #a2a9b1;
+            padding-bottom: 3px;
+            margin-top: 1.5em;
+            font-weight: normal;
+        }
+        /* 維基風格 Infobox */
+        .infobox {
+            border: 1px solid #a2a9b1;
+            background-color: #f8f9fa;
+            color: #202122;
+            margin: 0.5em 0 1em 1em;
+            padding: 0.2em;
+            float: right;
+            clear: right;
+            width: 300px;
+            font-size: 88%;
+            line-height: 1.5em;
+            border-collapse: collapse;
+        }
+        .infobox th, .infobox td {
+            border: 1px solid #a2a9b1;
+            padding: 0.3em 0.5em;
+            text-align: left;
+        }
+        .infobox .title {
+            background-color: #b0c4de;
+            font-size: 115%;
+            font-weight: bold;
+            text-align: center;
+        }
+        .infobox th {
+            background-color: #cedff2;
+            width: 35%;
+            white-space: nowrap;
+        }
+        .main-article {
+            background-color: #f8f9fa;
+            border-left: 4px solid #36c;
+            padding: 8px 12px;
+            margin: 12px 0;
+            font-size: 95%;
+        }
+        .main-article a {
+            color: #36c;
+            text-decoration: none;
+        }
+        .main-article a:hover {
+            text-decoration: underline;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 4px;
+        }
+        .footnotes {
+            margin-top: 30px;
+            border-top: 1px solid #a2a9b1;
+            padding-top: 10px;
+            font-size: 90%;
+        }
+        sup {
+            font-size: 75%;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+            top: -0.5em;
+        }
+        sup a {
+            text-decoration: none;
+            color: #36c;
+        }
+        a {
+            color: #36c;
+        }
+        @media (max-width: 650px) {
+            .infobox {
+                float: none;
+                width: 100%;
+                margin: 1em 0;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 頁頭：中華民國國旗與國徽 -->
+    <div class="header-emblems" style="border-bottom: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Flag_of_the_Republic_of_China.svg" height="120">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/National_Emblem_of_the_Republic_of_China.svg" width="120">
+        <br>
+        <h1 style="color: #0000AA; text-align: center; font-size: 3em; border-bottom: none;">
+            中華民國萬歲　三民主義萬歲
+        </h1>
+</div>
+
+    <!-- 資訊框 Infobox Civil Conflict -->
+    <table class="infobox">
+        <tr>
+            <th colspan="2" class="title">2C人民抗Rey大革命</th>
+        </tr>
+        <tr>
+            <th>日期</th>
+            <td>2025年—2026年6月26日</td>
+        </tr>
+        <tr>
+            <th>地點</th>
+            <td>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Flag_of_the_Republic_of_China.svg" height="14" alt="ROC Flag">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Flag_of_Hong_Kong.svg" height="13" alt="HK Flag">
+                中華民國寶安縣香港地區九龍深水埗詩歌舞街45號
+            </td>
+        </tr>
+        <tr>
+            <th>起因</th>
+            <td>
+                <ul>
+                    <li>Gay Rey對2C人民的壓迫</li>
+                    <li>2C人民對教職員的不滿</li>
+                    <li>八九民運、反修例運動對部份學生之影響</li>
+                    <li>Gay Rey濫用處分機制</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <th>目標</th>
+            <td>
+                <ul>
+                    <li>推翻Gay Rey政權</li>
+                    <li>撤回所有處分</li>
+                    <li>民主化、自由化</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <th>方式</th>
+            <td>絕食、白紙抗議、怠課、杯葛、不合作運動等</td>
+        </tr>
+        <tr>
+            <th>結果</th>
+            <td>
+                <strong>2C一方慘勝</strong>
+                <ul>
+                    <li>Gay Rey倒台</li>
+                    <li>大量成員遭到處分</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2" class="section-header">交戰方</th>
+        </tr>
+        <tr>
+            <td style="width: 50%;"><strong>訓導組當局</strong></td>
+            <td style="width: 50%;"><strong>2C人民</strong></td>
+        </tr>
+        <tr>
+            <th colspan="2" class="section-header">指揮官與領袖</th>
+        </tr>
+        <tr>
+            <td>
+                <strong>強硬派：</strong>
+                <ul>
+                    <li>白興彤主任</li>
+                    <li>祁少玉老師</li>
+                    <li>Kevin Thomas Rey</li>
+                    <li>徐石磊</li>
+                </ul>
+                <strong>溫和派：</strong>
+                <ul>
+                    <li>班主任簡老師</li>
+                    <li>公民科謝老師</li>
+                    <li>地理科鍾老師</li>
+                    <li>英文科胡主任</li>
+                </ul>
+            </td>
+            <td>
+                <strong>學生領袖：</strong>
+                <ul>
+                    <li>以張瑋天為首的<a href="cwt-2429-0553-7245-0730-7162-0957.html">四人幫</a></li>
+                    <li>CWS(化名)</li>
+                    <li>WHL(化名)</li>
+                    <li>WingHo(化名)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2" class="section-header">傷亡與損失</th>
+        </tr>
+        <tr>
+            <th>拘捕與處分</th>
+            <td>2C班大部份學生均受到不同程度處分</td>
+        </tr>
+    </table>
+
+    <!-- 導言 -->
+    <p><strong>2C人民抗Rey大革命</strong>，簡稱<strong>抗Rey大革命</strong>，又稱<strong>抗Rey學運</strong>，由<strong>CWS-KTR衝突</strong>演化而來，由 CWS 於 2025 年末對抗 Gay Rey 開始，2026 年 1 月末演化為革命，且於 2026 年 4 月被賦予自由化、民主化的意義。</p>
+    
+    <p>革命以抗議運動為主，手段包括絕食、白紙抗議、怠課、杯葛、不合作運動等。Gay Rey 最終於 2026 年 7 月倒台。</p>
+
+    <!-- 歷史 -->
+    <h2>歷史</h2>
+
+    <h3>114年 (2025年)</h3>
+    <p><em>（資料補充中）</em></p>
+
+    <h3>115年 (2026年)</h3>
+    <ul class="timeline-list">
+        <li><span class="timeline-date">1月29日</span> —— Gay Rey 濫用處分機制，對學生進行迫害，許多學生由中立轉向反 Rey，使衝突升格為革命。</li>
+        <li><span class="timeline-date">2月6日</span> —— 張瑋天於課堂上閱讀《習近平新時代中國特色社會主義思想學習綱要》及 <em>Astro Junior Citizenship, Economy, Society Book 2B</em> 並均被收走，下午於班主任簡老師出面下取回。</li>
+        <li><span class="timeline-date">2月12, 13日</span> —— 張瑋天請事假，且有通知 Gay Rey 以外之其他所有老師。Gay Rey 聲稱要將張瑋天留堂處置以完成讀後感。</li>
+        <li><span class="timeline-date">3月3日</span> —— 張瑋天於課堂上撕毀閱讀報告工作紙。因此訓導組於 3 月 4 日派遣祁少玉老師介入事件，但成效甚微，張瑋天於道歉信寫 "Worst Regards" 抗議。</li>
+        <li><span class="timeline-date">3月12日</span> —— 張瑋天影印 15 份《愛蓮說》默書範圍並於英文課上派發。祁少玉老師於翌日介入但未給予處分。白興彤主任亦介入但同樣未有給予處分。</li>
+        <li><span class="timeline-date">4月16日</span> —— 張瑋天以 A4 紙張製作仿文革式紙帽，抗 Rey 革命開始政治化，並被賦予自由化、民主化的意義。</li>
+        <li><span class="timeline-date">4月17日</span> —— 張瑋天於課堂上使用由國安處派發的便條紙寫上文革式口號，放在課桌上。</li>
+        <li><span class="timeline-date">4月22日</span> —— TBL（化名）因病未能於下課時起立，張瑋天離場抗議。4 月 24 日祁少玉老師再次介入惟未給予處分。</li>
+        <li><span class="timeline-date">4月29日</span> —— 有人於課堂上惡搞 Gay Rey，引致徐石磊留堂斥責。同日學生領袖借其拒絕審查中華民國國旗一事指控其煽動分裂國家。</li>
+        <li><span class="timeline-date">5月5日</span> —— Gay Rey 攜 iPad 錄下課堂場景，部份學運領袖開始白紙抗議。</li>
+        <li><span class="timeline-date">5月7日</span> —— CWT（化名）家長獲邀與 PH 會面，事件稍為冷卻。</li>
+        <li><span class="timeline-date">5月27日</span> —— WHK 派 LWS 出席當天英文隨堂考試。WHK 於翌日應邀出席英文課。</li>
+        <li><span class="timeline-date">6月4日</span> —— 無事發生。</li>
+        <li><span class="timeline-date">6月14日</span> —— 開始以惡搞形式生產 Gay Rey 之梗圖。</li>
+        <li><span class="timeline-date">6月26日</span> —— 最後一次正式課堂之日子，學運領袖發動抗議。Gay Rey 此日完結後其勢力正式倒台。</li>
+    </ul>
+
+    <!-- 各方反應 -->
+    <h2>各方反應</h2>
+
+    <h3>班主任簡老師</h3>
+    <p>時任 2C 班主任簡老師屬溫和派，雖多次介入抗議行動但並未有大幅度打壓。其介入抗議之方式僅為名義上「通緝」肇事者，頻繁約見學運領袖展開對話，多次緩和學運領袖之情緒，故於學運領袖中民望頗高。</p>
+
+    <h3>輔導組</h3>
+    <p>蔡庭焜老師、李劍寶老師、黎社工等均曾介入事件，成效甚微但至少未有引起反作用。</p>
+
+    <!-- 註解 -->
+    <h2>註解</h2>
+    <div class="footnotes">
+        <p><em>尚無特定腳註備註。</em></p>
+    </div>
+</div>
+
+</body>
+</html>
